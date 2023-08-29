@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Changepond Testcases</title>
+</head>
+<body>
+    <h1>Changepond Test Cases</h1>
+    <form id="dataForm" method="POST" action="/process_data">
+        <textarea id="json_data" name="json_data" rows="9" cols="100" placeholder="Enter JSON data here">{{ existing_data }}</textarea><br>
+        <button type="submit" id="submitButton">Submit</button>
+    </form>
+
+    <script>
+        const textarea = document.getElementById('json_data');
+        let prevTextareaValue = textarea.value;
+    
+        // Send data to the server using AJAX
+        function sendDataToServer(data) {
+            const xhr = new XMLHttpRequest();
+            xhr.open('POST', '/update_data', true);
+            xhr.setRequestHeader('Content-Type', 'application/json');
+            xhr.send(JSON.stringify({ json_data: data }));
+        }
+    
+        // Listen for changes in the textarea
+        textarea.addEventListener('input', function() {
+            if (textarea.value !== prevTextareaValue) {
+                prevTextareaValue = textarea.value;
+                sendDataToServer(prevTextareaValue);
+            }
+        });
+    
+        // Trigger initial data sending on page load if there's data
+        if (textarea.value.trim() !== "") {
+            sendDataToServer(textarea.value);
+        }
+    
+        // Periodically send updated data to the server
+        setInterval(function() {
+            if (textarea.value !== prevTextareaValue) {
+                prevTextareaValue = textarea.value;
+                sendDataToServer(prevTextareaValue);
+            }
+        }, 1000); // Adjust the interval (in milliseconds) as needed
+    </script>
+    
+</body>
+</html>
